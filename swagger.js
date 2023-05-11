@@ -68,10 +68,30 @@ const options = {
 						},
 					},
 				},
+				Error: {
+					type: 'object',
+					properties: {
+						status: {
+							type: 'string',
+							description: 'Status of the error',
+							example: 'error',
+						},
+						statusCode: {
+							type: 'integer',
+							description: 'HTTP status code',
+							example: 500,
+						},
+						message: {
+							type: 'string',
+							description: 'Description of the error',
+							example: 'An error occurred while processing your request.',
+						},
+					},
+				},
 			},
 		},
 	},
-	apis: ['./routes/api/*.js'],
+	apis: ['./routes/*.js'],
 };
 
 const specs = swaggerJsdoc(options);
