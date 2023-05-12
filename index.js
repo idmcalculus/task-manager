@@ -39,7 +39,7 @@ app.use('/v1/tasks', taskRoutes);
 app.use(handleError);
 
 app.get('/', (req, res) => {
-    res.send(welcomeHTML);
+    res.send(welcomeHTML());
 });
 
 // Connect to the MongoDB database
