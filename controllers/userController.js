@@ -24,15 +24,18 @@ exports.register = async (req, res, next) => {
 
 		res.status(201).json({ message: 'User registered successfully' });
 	} catch (error) {
-		console.error(error);
 		next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
 	}
 };
 
 exports.login = async (req, res, next) => {
-	const { email, password } = req.body;
-
 	try {
+		const { email, password } = req.body;
+
+		if (!email || !password) {
+			next(new ErrorHandler(400, 'Please provide all required fields'));
+		}
+
 		const user = await User.findOne({ email });
 
 		if (!user) {
