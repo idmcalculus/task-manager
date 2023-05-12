@@ -47,19 +47,8 @@ npm install
 cp .env.example .env
 ```
 
-Edit the `.env` file and replace the placeholders with your actual configurations:
+Edit the `.env` file and replace the placeholders with your actual configurations.
 
-```
-DB_CONNECTION_STRING=mongodb://localhost:27017/task-manager-api
-JWT_SECRET=your_jwt_secret
-PORT=3000
-NODE_ENV=development
-SENDGRID_API_KEY=your_sendgrid_api_key
-AWS_ACCESS_KEY_ID=your_aws_access_key_id
-AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
-AWS_REGION=your_aws_region
-SES_EMAIL_SENDER=your_ses_email_sender
-```
 
 5. Start the development server:
 
