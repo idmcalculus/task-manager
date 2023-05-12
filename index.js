@@ -9,7 +9,7 @@ const morgan = require('morgan');
 const swaggerDocument = require('./swagger');
 const connectToDatabase = require('./database/connection');
 const { handleError } = require('./middleware/errorHandler');
-const welcomeHTML = require('./utils/welcomeHTML');
+const { welcomeHTML } = require('./utils/welcomeHTML');
 
 // Import routes
 const userRoutes = require('./routes/users');
