@@ -24,7 +24,7 @@ exports.welcomeHTML = () => {
                     color: #007bff;
                 }
                 p {
-                    margin-top: 20px;
+                    margin: 20px auto;
                     text-align: center;
                     max-width: 800px;
                     color: #3E3E40;
