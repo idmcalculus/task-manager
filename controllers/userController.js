@@ -4,10 +4,14 @@ const User = require('../models/User');
 const { ErrorHandler } = require('../middleware/errorHandler');
 
 exports.register = async (req, res, next) => {
-	const { username, email, password } = req.body;
-
 	try {
-		const existingUser = await User.findOne({ email });
+		const { username, email, password } = req.body;
+		
+		if (!username || !email || !password) {
+			next(new ErrorHandler(400, 'Please provide all required fields'));
+		}
+
+		const existingUser = await User.findOne({ $or: [{ email }, { username }] });
 
 		if (existingUser) {
 			next(new ErrorHandler(400, 'User already exists'));
@@ -20,6 +24,7 @@ exports.register = async (req, res, next) => {
 
 		res.status(201).json({ message: 'User registered successfully' });
 	} catch (error) {
+		console.error(error);
 		next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
 	}
 };
