@@ -69,6 +69,7 @@ router.get('/tasks', authenticate, authorize, taskController.getTasks);
  * /v1/tasks:
  *   post:
  *     summary: Create a new task
+ *     description: Create a new task. Sends an email notification to the assigned user if the task is assigned during creation.
  *     tags: [Tasks]
  *     security:
  *       - BearerAuth: []
@@ -105,6 +106,7 @@ router.post('/tasks', authenticate, authorize, taskValidationRules, sanitizeTask
  * /v1/tasks/{id}:
  *   put:
  *     summary: Update an existing task
+ *     description: Update an existing task. Sends an email notification to the assigned user if the task is reassigned or marked as completed.
  *     tags: [Tasks]
  *     security:
  *       - BearerAuth: []
