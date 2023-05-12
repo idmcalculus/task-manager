@@ -14,7 +14,19 @@ exports.getTasks = async (req, res, next) => {
 
 exports.createTask = async (req, res, next) => {
 	try {
-		const newTask = new Task(req.body);
+		const { title, description, dueDate, priority, assignedTo, status } = req.body;
+
+		const newTask = new Task({
+			title,
+			description,
+			dueDate,
+			priority,
+			assignedTo,
+			status,
+			createdBy: req.user._id,
+			attachment: req.file && req.file.path,
+		});
+
 		const task = await newTask.save();
 
 		// Send email to assigned user if task is assigned
@@ -40,7 +52,21 @@ exports.updateTask = async (req, res, next) => {
 			return next(new ErrorHandler(404, 'Task not found'));
 		}
 
-		const { assignedTo, status } = req.body;
+		const { title, description, dueDate, priority, assignedTo, status } = req.body;
+
+		const updatedTask = {
+			title,
+			description,
+			dueDate,
+			priority,
+			assignedTo,
+			status,
+		};
+
+		if (req.file) {
+			updatedTask.attachment = req.file.path;
+		}
+		
 		let notifyAssignedUser = false;
 		let notifyCompleted = false;
 
@@ -51,7 +77,7 @@ exports.updateTask = async (req, res, next) => {
 
 		if (status && status !== task.status) {
 			task.status = status;
-			if (status === 'completed') {
+			if (status === 'Completed') {
 				notifyCompleted = true;
 			}
 		}

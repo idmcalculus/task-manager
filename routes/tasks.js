@@ -1,36 +1,11 @@
 const express = require('express');
-const { check } = require('express-validator');
-const sanitizeHtml = require('sanitize-html');
+const { taskValidationRules } = require('../utils/validation');
+const { sanitizeTaskData } = require('../utils/sanitization');
 
 const router = express.Router();
 const taskController = require('../controllers/taskController');
 const { authenticate, authorize } = require('../middleware/authMiddleware');
-
-const taskValidationRules = [
-	check('title')
-		.trim()
-		.isLength({ min: 1 })
-		.withMessage('Title is required')
-		.escape(),
-	check('description')
-		.trim()
-		.escape(),
-	check('status')
-		.trim()
-		.escape(),
-	check('assignedTo')
-		.optional()
-		.isMongoId()
-		.withMessage('Assigned user ID is invalid')
-		.escape(),
-];
-  
-const sanitizeTaskData = (req, res, next) => {
-	req.body.title = sanitizeHtml(req.body.title);
-	req.body.description = sanitizeHtml(req.body.description);
-	req.body.status = sanitizeHtml(req.body.status);
-	next();
-};
+const multerUpload = require('../config/multer');
   
 /**
  * @swagger
@@ -73,12 +48,35 @@ router.get('/tasks', authenticate, authorize, taskController.getTasks);
  *     tags: [Tasks]
  *     security:
  *       - BearerAuth: []
+ *     consumes:
+ *       - multipart/form-data
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/Task'
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               dueDate:
+ *                 type: string
+ *                 format: date-time
+ *               priority:
+ *                 type: string
+ *                 enum: [low, medium, high]
+ *               assignedTo:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [not started, in progress, completed]
+ *               createdBy:
+ *                 type: string
+ *               attachment:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       201:
  *         description: Task created successfully
@@ -99,7 +97,14 @@ router.get('/tasks', authenticate, authorize, taskController.getTasks);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/tasks', authenticate, authorize, taskValidationRules, sanitizeTaskData, taskController.createTask);
+router.post('/tasks',
+	authenticate,
+	authorize,
+	taskValidationRules,
+	sanitizeTaskData,
+	multerUpload.single('attachment'),
+	taskController.createTask
+);
 
 /**
  * @swagger
@@ -116,12 +121,35 @@ router.post('/tasks', authenticate, authorize, taskValidationRules, sanitizeTask
  *         required: true
  *         schema:
  *           type: string
+ *     consumes:
+ *       - multipart/form-data
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/Task'
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               dueDate:
+ *                 type: string
+ *                 format: date-time
+ *               priority:
+ *                 type: string
+ *                 enum: [low, medium, high]
+ *               assignedTo:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [not started, in progress, completed]
+ *               createdBy:
+ *                 type: string
+ *               attachment:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       200:
  *         description: Task updated successfully
@@ -148,7 +176,14 @@ router.post('/tasks', authenticate, authorize, taskValidationRules, sanitizeTask
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.put('/tasks/:id', authenticate, authorize, taskValidationRules, sanitizeTaskData, taskController.updateTask);
+router.put('/tasks/:id',
+	authenticate,
+	authorize,
+	taskValidationRules,
+	sanitizeTaskData,
+	multerUpload.single('attachment'),
+	taskController.updateTask
+);
 
 /**
  * @swagger

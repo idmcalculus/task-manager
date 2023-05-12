@@ -2,6 +2,9 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const router = express.Router();
 
+const { userValidationRules } = require('../utils/validation');
+const { sanitizeUserData } = require('../utils/sanitization');
+
 /**
  * @swagger
  * /v1/users/register:
@@ -30,7 +33,7 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/register', userController.register);
+router.post('/register', userValidationRules, sanitizeUserData, userController.register);
 
 /**
  * @swagger
@@ -66,6 +69,6 @@ router.post('/register', userController.register);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/login', userController.login);
+router.post('/login', userValidationRules, sanitizeUserData, userController.login);
 
 module.exports = router;
