@@ -9,6 +9,7 @@ const morgan = require('morgan');
 const swaggerDocument = require('./swagger');
 const connectToDatabase = require('./database/connection');
 const { handleError } = require('./middleware/errorHandler');
+const welcomeHTML = require('./utils/welcomeHTML');
 
 // Import routes
 const userRoutes = require('./routes/users');
@@ -37,15 +38,16 @@ app.use('/v1/tasks', taskRoutes);
 // error handler middleware
 app.use(handleError);
 
+app.get('/', (req, res) => {
+    res.send(welcomeHTML);
+});
+
 // Connect to the MongoDB database
 connectToDatabase()
 .then(() => {
     const port = process.env.PORT || 3000;
     app.listen(port, () => {
         console.log(`Server is running on port ${port}`);
-    });
-    app.get('/', (req, res) => {
-        res.send('Welcome to the Task Manager API!');
     });
 })
 .catch((err) => {
