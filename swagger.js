@@ -45,6 +45,7 @@ const options = {
 						},
 						assignedTo: {
 							type: 'string',
+							description: 'The ID of the user to whom the task is assigned',
 						},
 					},
 				},

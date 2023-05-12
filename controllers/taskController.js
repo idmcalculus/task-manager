@@ -3,8 +3,8 @@ const { ErrorHandler } = require('../middleware/errorHandler');
 
 exports.getTasks = async (req, res, next) => {
 	try {
-		const tasks = await Task.find();
-		res.json(tasks);
+		const tasks = Task.find({}).populate('assignedTo', 'username email');
+		res.status(200).json(tasks);
 	} catch (error) {
 		next(new ErrorHandler(500, 'Failed to retrieve tasks'));
 	}
@@ -26,7 +26,7 @@ exports.updateTask = async (req, res, next) => {
 		if (!task) {
 			return next(new ErrorHandler(404, 'Task not found'));
 		}
-		res.json(task);
+		res.status(202).json(task);
 	} catch (error) {
 		next(new ErrorHandler(500, 'Failed to update task'));
 	}
@@ -38,7 +38,7 @@ exports.deleteTask = async (req, res, next) => {
 		if (!task) {
 			return next(new ErrorHandler(404, 'Task not found'));
 		}
-		res.json({ message: 'Task deleted successfully' });
+		res.status(202).json({ message: 'Task deleted successfully' });
 	} catch (error) {
 		next(new ErrorHandler(500, 'Failed to delete task'));
 	}

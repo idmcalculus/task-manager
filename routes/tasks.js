@@ -18,6 +18,11 @@ const taskValidationRules = [
 	check('status')
 		.trim()
 		.escape(),
+	check('assignedTo')
+		.optional()
+		.isMongoId()
+		.withMessage('Assigned user ID is invalid')
+		.escape(),
 ];
   
 const sanitizeTaskData = (req, res, next) => {
