@@ -2,10 +2,13 @@
 	"name": "task-manager",
 	"version": "1.0.0",
 	"description": "",
-	"main": "app.js",
+	"main": "index.js",
+	"engines": {
+		"node": "^16.13.0"
+	},
 	"scripts": {
-		"start": "node app.js",
-		"dev": "nodemon app.js",
+		"start": "node index.js",
+		"dev": "nodemon index.js",
 		"test": "mocha 'test/**/*.test.js' --timeout 10000 --exit"
 	},
 	"keywords": [],
