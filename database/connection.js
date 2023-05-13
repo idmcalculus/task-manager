@@ -6,6 +6,7 @@ dotenv.config();
 const connectToDatabase = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
+      dbName: 'task-manager',
       useNewUrlParser: true,
       useUnifiedTopology: true
     });

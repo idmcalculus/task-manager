@@ -5,6 +5,8 @@ const expect = chai.expect;
 
 chai.use(chaiHttp);
 
+let exampleUser;
+
 describe('User API', () => {
 	describe('POST /register', () => {
 		it('should register a new user', (done) => {
@@ -13,6 +15,8 @@ describe('User API', () => {
 				email: `test${Date.now()}@example.com`,
 				password: 'test123',
 			};
+
+			exampleUser = newUser;
 
 			chai
 			.request(app)
@@ -25,9 +29,9 @@ describe('User API', () => {
 			});
 		});
 
-		it('should return an error if a credential (e.g email) is not provided', (done) => {
+		it('should return an error if a credential (e.g user) is not provided', (done) => {
 			const invalidUser = {
-				username: 'test',
+				email: 'test@example.com',
 			  	password: 'test123',
 			};
 	  
@@ -43,15 +47,10 @@ describe('User API', () => {
 		});
 
 		it('should return an error if the user already exists', (done) => {
-			const existingUser = {
-				email: 'test@example.com',
-				password: 'test123',
-			};
-	  
 			chai
 			.request(app)
 			.post('/v1/users/register')
-			.send(existingUser)
+			.send(exampleUser)
 			.end((err, res) => {
 				expect(res).to.have.status(400);
 				expect(res.body).to.have.property('message');
@@ -63,8 +62,8 @@ describe('User API', () => {
 	describe('POST /login', () => {
 		it('should log in a user and return a token', (done) => {
 			const user = {
-				email: 'test@example.com',
-				password: 'test123',
+				email: exampleUser.email,
+				password: exampleUser.password,
 			};
 
 			chai
@@ -97,7 +96,7 @@ describe('User API', () => {
 
 		it('should return an error if password is incorrect', (done) => {
 			const userWithIncorrectPassword = {
-				email: 'test@example.com',
+				email: exampleUser.email,
 				password: 'wrongpassword',
 			};
 	  

@@ -8,7 +8,7 @@ exports.getTasks = async (req, res, next) => {
 		const tasks = Task.find({}).populate('assignedTo', 'username email');
 		res.status(200).json(tasks);
 	} catch (error) {
-		next(new ErrorHandler(500, 'Failed to retrieve tasks'));
+		return next(new ErrorHandler(500, 'Failed to retrieve tasks'));
 	}
 };
 
@@ -40,7 +40,7 @@ exports.createTask = async (req, res, next) => {
 		}
 		res.status(201).json(newTask);
 	} catch (error) {
-		next(new ErrorHandler(500, 'Failed to create task'));
+		return next(new ErrorHandler(500, 'Failed to create task'));
 	}
 };
 
@@ -104,7 +104,7 @@ exports.updateTask = async (req, res, next) => {
 
 		res.status(202).json(task);
 	} catch (error) {
-		next(new ErrorHandler(500, 'Failed to update task'));
+		return next(new ErrorHandler(500, 'Failed to update task'));
 	}
 };
 
@@ -116,6 +116,6 @@ exports.deleteTask = async (req, res, next) => {
 		}
 		res.status(202).json({ message: 'Task deleted successfully' });
 	} catch (error) {
-		next(new ErrorHandler(500, 'Failed to delete task'));
+		return next(new ErrorHandler(500, 'Failed to delete task'));
 	}
 };

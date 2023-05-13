@@ -13,6 +13,10 @@ const options = {
 				url: 'http://localhost:3000',
 				description: 'Local development server',
 			},
+			{
+				url: 'https://task-manager-api-puce.vercel.app/',
+				description: 'Production server',
+			}
 		],
 		components: {
 			securitySchemes: {

@@ -8,23 +8,21 @@ exports.register = async (req, res, next) => {
 		const { username, email, password } = req.body;
 		
 		if (!username || !email || !password) {
-			next(new ErrorHandler(400, 'Please provide all required fields'));
+			return next(new ErrorHandler(400, 'Please provide all required fields'));
 		}
 
 		const existingUser = await User.findOne({ $or: [{ email }, { username }] });
 
 		if (existingUser) {
-			next(new ErrorHandler(400, 'User already exists'));
+			return next(new ErrorHandler(400, 'User already exists'));
 		}
 
-		const hashedPassword = await bcrypt.hash(password, 12);
-
-		const newUser = new User({ username, email, password: hashedPassword });
+		const newUser = new User(req.body);
 		await newUser.save();
 
-		res.status(201).json({ message: 'User registered successfully' });
+		return res.status(201).json({ message: 'User registered successfully' });
 	} catch (error) {
-		next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
+		return next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
 	}
 };
 
@@ -33,27 +31,27 @@ exports.login = async (req, res, next) => {
 		const { email, password } = req.body;
 
 		if (!email || !password) {
-			next(new ErrorHandler(400, 'Please provide all required fields'));
+			return next(new ErrorHandler(400, 'Please provide all required fields'));
 		}
 
 		const user = await User.findOne({ email });
 
 		if (!user) {
-			next(new ErrorHandler(404, 'User not found'));
+			return next(new ErrorHandler(401, 'User not found'));
 		}
 
 		const isPasswordValid = await bcrypt.compare(password, user.password);
 
 		if (!isPasswordValid) {
-			next(new ErrorHandler(400, 'Invalid credentials'));
+			return next(new ErrorHandler(401, 'Invalid credentials'));
 		}
 
-		const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
+		const token = jwt.sign({ user }, process.env.JWT_SECRET, {
 			expiresIn: process.env.JWT_EXPIRATION,
 		});
 
-		res.status(200).json({ token, user });
+		return res.status(200).json({ token, user });
 	} catch (error) {
-		next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
+		return next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
 	}
 };

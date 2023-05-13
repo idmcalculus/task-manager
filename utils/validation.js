@@ -53,8 +53,7 @@ const userValidationRules = [
 	check('email')
 		.trim()
 		.isEmail()
-		.withMessage('Email is invalid')
-		.normalizeEmail(),
+		.withMessage('Email is invalid'),
 	check('password')
 		.trim()
 		.isLength({ min: 6 })

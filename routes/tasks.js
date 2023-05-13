@@ -37,7 +37,7 @@ const multerUpload = require('../config/multer');
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/tasks', authenticate, authorize, taskController.getTasks);
+router.get('/tasks', authenticate, taskController.getTasks);
 
 /**
  * @swagger
@@ -99,7 +99,6 @@ router.get('/tasks', authenticate, authorize, taskController.getTasks);
  */
 router.post('/tasks',
 	authenticate,
-	authorize,
 	taskValidationRules,
 	sanitizeTaskData,
 	multerUpload.single('attachment'),
@@ -178,7 +177,6 @@ router.post('/tasks',
  */
 router.put('/tasks/:id',
 	authenticate,
-	authorize,
 	taskValidationRules,
 	sanitizeTaskData,
 	multerUpload.single('attachment'),
