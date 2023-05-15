@@ -2,28 +2,55 @@ const Task = require('../models/Task');
 const User = require('../models/User');
 const { ErrorHandler } = require('../middleware/errorHandler');
 const { sendEmail } = require('../services/emailService');
+const { isValidDate } = require('../utils/isValidDate');
 
 exports.getTasks = async (req, res, next) => {
 	try {
-		const tasks = Task.find({}).populate('assignedTo', 'username email');
-		res.status(200).json(tasks);
+		const tasks = await Task.find({})
+		.populate([
+			{ path: 'assignedTo', select: 'username email' },
+			{ path: 'createdBy', select: 'username email' },
+		]);
+		res.status(200).send(tasks);
 	} catch (error) {
+		console.log(error);
 		return next(new ErrorHandler(500, 'Failed to retrieve tasks'));
+	}
+};
+
+exports.getTaskById = async (req, res, next) => {
+	try {
+		const task = await Task.findById(req.params.id)
+			.populate([
+				{ path: 'assignedTo', select: 'username email' },
+				{ path: 'createdBy', select: 'username email' },
+			]);
+
+		if (!task) {
+			return next(new ErrorHandler(404, 'Task not found'));
+		}
+
+		res.status(200).send(task);
+	} catch (error) {
+		return next(new ErrorHandler(500, 'Failed to retrieve task'));
 	}
 };
 
 exports.createTask = async (req, res, next) => {
 	try {
-		const { title, description, dueDate, priority, assignedTo, status } = req.body;
+		const { title, dueDate } = req.body;
+
+		if (!title || !dueDate) {
+			return next(new ErrorHandler(400, 'Title and dueDate are required fields'));
+		}
+
+		if (!isValidDate(dueDate)) {
+			return next(new ErrorHandler(400, 'Invalid dueDate. Please provide a valid date in the format YYYY-MM-DD'));
+		}
 
 		const newTask = new Task({
-			title,
-			description,
-			dueDate,
-			priority,
-			assignedTo,
-			status,
-			createdBy: req.user._id,
+			...req.body,
+			createdBy: req.user.user._id,
 			attachment: req.file && req.file.path,
 		});
 
@@ -38,6 +65,7 @@ exports.createTask = async (req, res, next) => {
 				`Dear ${user.username},\n\nA new task titled "${task.title}" has been assigned to you.`,
 			);
 		}
+
 		res.status(201).json(newTask);
 	} catch (error) {
 		return next(new ErrorHandler(500, 'Failed to create task'));

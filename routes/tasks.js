@@ -41,6 +41,44 @@ router.get('/tasks', authenticate, taskController.getTasks);
 
 /**
  * @swagger
+ * /v1/tasks/{id}:
+ *   get:
+ *     summary: Retrieve a list of tasks
+ *     tags: [Tasks]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Retrieve a task by its id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Task'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Something went wrong. Please try again later
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/tasks/:id', authenticate, taskController.getTaskById);
+
+/**
+ * @swagger
  * /v1/tasks:
  *   post:
  *     summary: Create a new task

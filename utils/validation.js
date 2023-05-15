@@ -7,9 +7,11 @@ const taskValidationRules = [
 		.withMessage('Title is required')
 		.escape(),
 	check('description')
+		.optional()
 		.trim()
 		.escape(),
 	check('status')
+		.optional()
 		.trim()
 		.escape(),
 	check('assignedTo')
@@ -19,8 +21,6 @@ const taskValidationRules = [
 		.escape(),
 	check('dueDate')
 		.optional()
-		.isISO8601()
-		.withMessage('Due date is invalid')
 		.escape(),
 	check('priority')
 		.optional()

@@ -33,7 +33,7 @@ app.use('/v1/', apiRateLimiter);
 
 // Routes
 app.use('/v1/users', userRoutes);
-app.use('/v1/tasks', taskRoutes);
+app.use('/v1', taskRoutes);
 
 // error handler middleware
 app.use(handleError);
