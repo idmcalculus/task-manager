@@ -25,8 +25,9 @@ const apiRateLimiter = rateLimit({
 
 const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 
+// use 3 origins for CORS
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: [process.env.BUILD_URL, process.env.LOCAL_URL, process.env.PROD_URL],
     credentials: true,
 }));
 app.use(express.json());
