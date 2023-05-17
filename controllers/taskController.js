@@ -4,14 +4,49 @@ const { ErrorHandler } = require('../middleware/errorHandler');
 const { sendEmail } = require('../services/emailService');
 const { isValidDate } = require('../utils/isValidDate');
 
+const ITEMS_PER_PAGE = 5;
+
 exports.getTasks = async (req, res, next) => {
 	try {
-		const tasks = await Task.find({})
-		.populate([
-			{ path: 'assignedTo', select: 'username email' },
-			{ path: 'createdBy', select: 'username email' },
-		]);
-		res.status(200).send(tasks);
+		let { page, search, status, priority } = req.query;
+
+		page = page ? Number(page) : 1;
+		const skip = (page - 1) * ITEMS_PER_PAGE;
+
+		let query = {};
+
+		if (search) {
+			query.$or = [
+				{ title: { $regex: search, $options: 'i' } },
+				{ description: { $regex: search, $options: 'i' } }
+			];
+		}
+
+		if (status) {
+			query.status = status;
+		}
+
+		if (priority) {
+			query.priority = priority;
+		}
+
+		console.log(query);
+
+		const tasks = await Task.find(query)
+			.populate([
+				{ path: 'assignedTo', select: 'username email' },
+				{ path: 'createdBy', select: 'username email' },
+			])
+			.skip(skip)
+			.limit(ITEMS_PER_PAGE);
+
+		const totalDocuments = await Task.countDocuments();
+
+		res.status(200).send({
+			tasks,
+			currentPage: page,
+			totalPages: Math.ceil(totalDocuments / ITEMS_PER_PAGE),
+		});
 	} catch (error) {
 		console.log(error);
 		return next(new ErrorHandler(500, 'Failed to retrieve tasks'));
@@ -50,7 +85,6 @@ exports.createTask = async (req, res, next) => {
 
 		const newTask = new Task({
 			...req.body,
-			createdBy: req.user.user._id,
 			attachment: req.file && req.file.path,
 		});
 
@@ -62,12 +96,14 @@ exports.createTask = async (req, res, next) => {
 			await sendEmail(
 				user.email,
 				'New Task Assigned',
-				`Dear ${user.username},\n\nA new task titled "${task.title}" has been assigned to you.`,
+				`Dear ${user.username},\n\nA new task titled "${task.title}" has been assigned to you.
+				\n\nPlease login to your account to view the task details.\n\nRegards,\nTask Manager`,
 			);
 		}
 
 		res.status(201).json(newTask);
 	} catch (error) {
+		console.error(error);
 		return next(new ErrorHandler(500, 'Failed to create task'));
 	}
 };
@@ -117,7 +153,8 @@ exports.updateTask = async (req, res, next) => {
 			await sendEmail(
 				user.email,
 				'Task Assigned',
-				`Dear ${user.username},\n\nA task titled "${task.title}" has been assigned to you.`,
+				`Dear ${user.username},\n\nA new task titled "${task.title}" has been assigned to you.
+				\n\nPlease login to your account to view the task details.\n\nRegards,\nTask Manager`,
 			);
 		}
 

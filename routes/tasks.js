@@ -1,11 +1,11 @@
 const express = require('express');
 const { taskValidationRules } = require('../utils/validation');
 const { sanitizeTaskData } = require('../utils/sanitization');
+const taskController = require('../controllers/taskController');
+const { authorize } = require('../middleware/authMiddleware');
+const multerUpload = require('../config/multer');
 
 const router = express.Router();
-const taskController = require('../controllers/taskController');
-const { authenticate, authorize } = require('../middleware/authMiddleware');
-const multerUpload = require('../config/multer');
   
 /**
  * @swagger
@@ -37,7 +37,7 @@ const multerUpload = require('../config/multer');
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/tasks', authenticate, taskController.getTasks);
+router.get('/tasks', taskController.getTasks);
 
 /**
  * @swagger
@@ -75,7 +75,7 @@ router.get('/tasks', authenticate, taskController.getTasks);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/tasks/:id', authenticate, taskController.getTaskById);
+router.get('/tasks/:id', taskController.getTaskById);
 
 /**
  * @swagger
@@ -136,7 +136,6 @@ router.get('/tasks/:id', authenticate, taskController.getTaskById);
  *               $ref: '#/components/schemas/Error'
  */
 router.post('/tasks',
-	authenticate,
 	taskValidationRules,
 	sanitizeTaskData,
 	multerUpload.single('attachment'),
@@ -214,7 +213,6 @@ router.post('/tasks',
  *               $ref: '#/components/schemas/Error'
  */
 router.put('/tasks/:id',
-	authenticate,
 	taskValidationRules,
 	sanitizeTaskData,
 	multerUpload.single('attachment'),
@@ -265,7 +263,7 @@ router.put('/tasks/:id',
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.delete('/tasks/:id', authenticate, authorize, taskController.deleteTask);
+router.delete('/tasks/:id', authorize, taskController.deleteTask);
 
 module.exports = router;
 

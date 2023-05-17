@@ -48,7 +48,13 @@ exports.login = async (req, res, next) => {
 
 		const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
 
-		req.session.user = { ...user, token };
+		req.session.user = {
+			id: user._id,
+			email: user.email,
+			username: user.username,
+			token,
+		};
+
         res.status(200).send('Logged in successfully');
 	} catch (error) {
 		return next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
@@ -57,12 +63,13 @@ exports.login = async (req, res, next) => {
 
 exports.authenticate = async (req, res, next) => {
 	try {
-		if (!req.session.user) {
+		if (await req.session.user) {
+			res.status(200).json(req.session.user);
+		} else {
 			return next(new ErrorHandler(401, 'Not authenticated'));
 		}
-
-		res.status(200).json(req.session.user);
 	} catch (error) {
+		console.error(error);
 		return next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
 	}
 };
@@ -76,3 +83,18 @@ exports.logout = async (req, res, next) => {
 		return next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
 	}
 }
+
+exports.getUsers = async (req, res, next) => {
+	try {
+		const query = req.query.query;
+		const users = await User.find({
+			$or: [
+				{ username: new RegExp(query, 'i') },
+				{ email: new RegExp(query, 'i') }
+			]
+		});
+		res.json(users);
+	} catch (error) {
+		return next(new ErrorHandler(500, 'Failed to retrieve users'));
+	}
+};
