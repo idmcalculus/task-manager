@@ -63,8 +63,10 @@ exports.login = async (req, res, next) => {
 
 exports.authenticate = async (req, res, next) => {
 	try {
-		if (await req.session.user) {
-			res.status(200).json(req.session.user);
+		const user = await req.session.user;
+		console.log({ session: await req.session })
+		if (user) {
+			res.status(200).json(user);
 		} else {
 			return next(new ErrorHandler(401, 'Not authenticated'));
 		}
@@ -93,8 +95,13 @@ exports.getUsers = async (req, res, next) => {
 				{ email: new RegExp(query, 'i') }
 			]
 		});
+
+		if (!users) {
+			return next(new ErrorHandler(404, 'Users not found'));
+		}
+
 		res.json(users);
 	} catch (error) {
-		return next(new ErrorHandler(500, 'Failed to retrieve users'));
+		return next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
 	}
 };

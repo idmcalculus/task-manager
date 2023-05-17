@@ -30,8 +30,6 @@ exports.getTasks = async (req, res, next) => {
 			query.priority = priority;
 		}
 
-		console.log(query);
-
 		const tasks = await Task.find(query)
 			.populate([
 				{ path: 'assignedTo', select: 'username email' },
@@ -48,7 +46,6 @@ exports.getTasks = async (req, res, next) => {
 			totalPages: Math.ceil(totalDocuments / ITEMS_PER_PAGE),
 		});
 	} catch (error) {
-		console.log(error);
 		return next(new ErrorHandler(500, 'Failed to retrieve tasks'));
 	}
 };

@@ -119,6 +119,28 @@ router.post('/logout', userController.logout);
  */
 router.get('/session-status', userController.authenticate);
 
+/**
+ * @swagger
+ * /v1/users:
+ *   get:
+ *     summary: Get all users or users by query
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: Users retrieved successfully
+ *       404:
+ *         description: No users found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Something went wrong. Please try again later
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.get('/', userController.getUsers);
 
 module.exports = router;
