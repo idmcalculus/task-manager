@@ -5,6 +5,8 @@ const swaggerUi = require('swagger-ui-express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 
 const swaggerDocument = require('./swagger');
 const connectToDatabase = require('./database/connection');
@@ -27,6 +29,13 @@ app.use(cors());
 app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { customCssUrl: CSS_URL }));
 app.use(morgan('dev'));
+app.use(cookieParser());
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { httpOnly: true, sameSite: 'strict' }
+}));
 
 // Apply rate limiter to all API routes
 app.use('/v1/', apiRateLimiter);

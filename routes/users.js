@@ -71,4 +71,52 @@ router.post('/register', userValidationRules, sanitizeUserData, userController.r
  */
 router.post('/login', userValidationRules, sanitizeUserData, userController.login);
 
+/**
+ * @swagger
+ * /v1/users/logout:
+ *   post:
+ *     summary: Logout a user
+ *     tags: [Users]
+ *     responses:
+ * 	     200:
+ *         description: User logged out successfully
+ * 	     401:
+ * 	       description: Not authenticated
+ * 	       content:
+ * 	         application/json:
+ * 	           schema:
+ * 			     $ref: '#/components/schemas/Error'
+ * 	     500:
+ * 	       description: Something went wrong. Please try again later
+ * 	       content:
+ * 	         application/json:
+ * 	           schema:
+ * 			     $ref: '#/components/schemas/Error'
+ */
+router.post('/logout', userController.logout);
+
+/**
+ * @swagger
+ * /v1/users/session-status:
+ *   get:
+ *     summary: Check if user is authenticated
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: User is authenticated
+ *       401:
+ *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Something went wrong. Please try again later
+ *         content:
+ *           application/json:
+ *             schema:
+ * 			     $ref: '#/components/schemas/Error'
+ */
+router.get('/session-status', userController.authenticate);
+
 module.exports = router;
