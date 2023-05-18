@@ -56,11 +56,11 @@ Edit the `.env` file and replace the placeholders with your actual configuration
 npm run dev
 ```
 
-The API should now be running at `http://localhost:3000`.
+The API should now be running at `http://localhost:8008`.
 
 ## API Documentation
 
-You can find the API documentation at `http://localhost:3000/api-docs`.
+You can find the API documentation at `http://localhost:8008/api-docs`.
 
 ## Running Tests
 

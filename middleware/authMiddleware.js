@@ -12,8 +12,6 @@ exports.authorize = (req, res, next) => {
 
 		const { isAdmin } = decoded.user;
 
-		console.log('isAdmin', isAdmin)
-
 		if (!isAdmin) {
 			return next(new ErrorHandler(403, 'Not authorized to access this route'));
 		}

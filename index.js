@@ -25,9 +25,18 @@ const apiRateLimiter = rateLimit({
 
 const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 
-// use 3 origins for CORS
+const allowedDomains = [process.env.LOCAL_URL, process.env.BUILD_URL, process.env.PROD_URL];
+
 app.use(cors({
-    origin: [process.env.BUILD_URL, process.env.LOCAL_URL, process.env.PROD_URL],
+    origin: function(origin, callback){
+        if(!origin) return callback(null, true);
+        if(allowedDomains.indexOf(origin) === -1){
+            var msg = 'The CORS policy for this site does not ' +
+                    'allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
     credentials: true,
 }));
 app.use(express.json());
@@ -37,14 +46,15 @@ app.use(session({
     name: 'sid',
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24,
-        sameSite: true,
-    }
+        sameSite: "none",
+    },
+    rolling: true,
 }));
 
 // Apply rate limiter to all API routes

@@ -10,7 +10,7 @@ const options = {
 		},
 		servers: [
 			{
-				url: 'http://localhost:3000',
+				url: 'http://localhost:8008',
 				description: 'Local development server',
 			},
 			{
@@ -44,13 +44,26 @@ const options = {
 							type: 'string',
 							format: 'date-time',
 						},
-						completed: {
-							type: 'boolean',
+						status: {
+							type: 'string',
+							enum: ['Not Started', 'In Progress', 'Completed'],
+						},
+						priority: {
+							type: 'string',
+							enum: ['Low', 'Medium', 'High'],
 						},
 						assignedTo: {
 							type: 'string',
 							description: 'The ID of the user to whom the task is assigned',
 						},
+						createdBy: {
+							type: 'string',
+							readOnly: true,
+						},
+						attachment: {
+							type: 'string',
+							format: 'binary',
+						}
 					},
 				},
 				User: {
