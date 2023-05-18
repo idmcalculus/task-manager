@@ -64,7 +64,7 @@ exports.login = async (req, res, next) => {
 exports.authenticate = async (req, res, next) => {
 	try {
 		const user = await req.session.user;
-		console.log({ session: await req.session })
+		
 		if (user) {
 			res.status(200).json(user);
 		} else {
@@ -79,6 +79,7 @@ exports.authenticate = async (req, res, next) => {
 exports.logout = async (req, res, next) => {
 	try {
 		req.session.destroy();
+		res.clearCookie('sid');
 		res.clearCookie('connect.sid');
 		res.status(200).send('Logged out successfully');
 	} catch (error) {

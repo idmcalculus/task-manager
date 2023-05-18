@@ -43,6 +43,7 @@ app.use(cors({
     methods: "GET,HEAD,PUT,POST,DELETE",
 }));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { customCssUrl: CSS_URL }));
+app.use('/uploads', express.static('uploads'));
 app.use(morgan('dev'));
 app.use(session({
     name: 'sid',
