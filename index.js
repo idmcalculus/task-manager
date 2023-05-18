@@ -27,19 +27,21 @@ const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger
 
 const allowedDomains = [process.env.LOCAL_URL, process.env.BUILD_URL, process.env.PROD_URL];
 
+app.use(express.json());
+app.set('trust proxy', 1);
 app.use(cors({
     origin: function(origin, callback){
-        if(!origin) return callback(null, true);
-        if(allowedDomains.indexOf(origin) === -1){
+        if(allowedDomains.indexOf(origin) !== -1 || !origin){
+            return callback(null, true);
+        } else {
             var msg = 'The CORS policy for this site does not ' +
                     'allow access from the specified Origin.';
             return callback(new Error(msg), false);
         }
-        return callback(null, true);
     },
     credentials: true,
+    methods: "GET,HEAD,PUT,POST,DELETE",
 }));
-app.use(express.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { customCssUrl: CSS_URL }));
 app.use(morgan('dev'));
 app.use(session({
