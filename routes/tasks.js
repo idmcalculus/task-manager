@@ -9,7 +9,7 @@ const router = express.Router();
   
 /**
  * @swagger
- * /v1/tasks:
+ * /api/v1/tasks:
  *   get:
  *     summary: Retrieve a list of tasks
  *     tags: [Tasks]
@@ -41,7 +41,7 @@ router.get('/tasks', taskController.getTasks);
 
 /**
  * @swagger
- * /v1/tasks/{id}:
+ * /api/v1/tasks/{id}:
  *   get:
  *     summary: Retrieve a list of tasks
  *     tags: [Tasks]
@@ -79,7 +79,7 @@ router.get('/tasks/:id', taskController.getTaskById);
 
 /**
  * @swagger
- * /v1/tasks:
+ * /api/v1/tasks:
  *   post:
  *     summary: Create a new task
  *     description: Create a new task. Sends an email notification to the assigned user if the task is assigned during creation.
@@ -144,7 +144,7 @@ router.post('/tasks',
 
 /**
  * @swagger
- * /v1/tasks/{id}:
+ * /api/v1/tasks/{id}:
  *   put:
  *     summary: Update an existing task
  *     description: Update an existing task. Sends an email notification to the assigned user if the task is reassigned or marked as completed.
@@ -221,7 +221,7 @@ router.put('/tasks/:id',
 
 /**
  * @swagger
- * /v1/tasks/{id}:
+ * /api/v1/tasks/{id}:
  *   delete:
  *     summary: Delete a task
  *     tags: [Tasks]

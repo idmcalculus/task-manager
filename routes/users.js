@@ -7,7 +7,7 @@ const { sanitizeUserData } = require('../utils/sanitization');
 
 /**
  * @swagger
- * /v1/users/register:
+ * /api/v1/users/register:
  *   post:
  *     summary: Register a new user
  *     tags: [Users]
@@ -37,7 +37,7 @@ router.post('/register', userValidationRules, sanitizeUserData, userController.r
 
 /**
  * @swagger
- * /v1/users/login:
+ * /api/v1/users/login:
  *   post:
  *     summary: Login a user
  *     tags: [Users]
@@ -73,7 +73,7 @@ router.post('/login', userValidationRules, sanitizeUserData, userController.logi
 
 /**
  * @swagger
- * /v1/users/logout:
+ * /api/v1/users/logout:
  *   post:
  *     summary: Logout a user
  *     tags: [Users]
@@ -97,7 +97,7 @@ router.post('/logout', userController.logout);
 
 /**
  * @swagger
- * /v1/users/session-status:
+ * /api/v1/users/session-status:
  *   get:
  *     summary: Check if user is authenticated
  *     tags: [Users]
@@ -121,7 +121,7 @@ router.get('/session-status', userController.authenticate);
 
 /**
  * @swagger
- * /v1/users:
+ * /api/v1/users:
  *   get:
  *     summary: Get all users or users by query
  *     tags: [Users]

@@ -17,7 +17,12 @@ exports.register = async (req, res, next) => {
 			return next(new ErrorHandler(400, 'User already exists'));
 		}
 
-		const newUser = new User(req.body);
+		const newUser = new User({
+			username: username.trim(),
+			email: email.trim().toLowerCase(),
+			password
+		});
+
 		await newUser.save();
 
 		return res.status(201).json({ message: 'User registered successfully' });
@@ -28,11 +33,15 @@ exports.register = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
 	try {
-		const { email, password } = req.body;
+		let { email, password } = req.body;
+
+		console.log({ email, password });
 
 		if (!email || !password) {
 			return next(new ErrorHandler(400, 'Please provide all required fields'));
 		}
+
+		email = email.trim().toLowerCase();
 
 		const user = await User.findOne({ email });
 
@@ -57,6 +66,7 @@ exports.login = async (req, res, next) => {
 
         res.status(200).send('Logged in successfully');
 	} catch (error) {
+		console.error(error);
 		return next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
 	}
 };
@@ -64,6 +74,7 @@ exports.login = async (req, res, next) => {
 exports.authenticate = async (req, res, next) => {
 	try {
 		const user = await req.session.user;
+		console.log({ session: req.session })
 		
 		if (user) {
 			res.status(200).json(user);
