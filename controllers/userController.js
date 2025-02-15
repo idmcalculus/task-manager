@@ -3,24 +3,62 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const { ErrorHandler } = require('../middleware/errorHandler');
 
+// Simple password check
+function isStrongPassword(password) {
+	return password && password.length >= 6;
+}
+
+// Basic email format check
+function isValidEmailFormat(email) {
+	const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	return regex.test(email);
+}
+
 exports.register = async (req, res, next) => {
 	try {
 		const { username, email, password } = req.body;
 		
-		if (!username || !email || !password) {
+		if (!username) {
+			return next(new ErrorHandler(400, 'username is required'));
+		}
+
+		if (!email || !password) {
 			return next(new ErrorHandler(400, 'Please provide all required fields'));
 		}
-
-		const existingUser = await User.findOne({ $or: [{ email }, { username }] });
-
-		if (existingUser) {
-			return next(new ErrorHandler(400, 'User already exists'));
+	
+		if (!isStrongPassword(password)) {
+			return next(new ErrorHandler(400, 'Password is too weak'));
 		}
-
-		const newUser = new User(req.body);
+	
+		if (!isValidEmailFormat(email)) {
+			return next(new ErrorHandler(400, 'Invalid email format'));
+		}
+	
+		const trimmedUsername = username.trim();
+		const lowerEmail = email.trim().toLowerCase();
+	
+		const existingUser = await User.findOne({
+			$or: [{ email: lowerEmail }, { username: trimmedUsername }],
+		});
+	
+		if (existingUser) {
+			return next(new ErrorHandler(409, 'User already exists'));
+		}
+	
+		const newUser = new User({
+			username: trimmedUsername,
+			email: lowerEmail,
+			password
+		});
+	
 		await newUser.save();
-
-		return res.status(201).json({ message: 'User registered successfully' });
+	
+		// Return the user object with ID, username, email
+		return res.status(201).json({
+			_id: newUser._id,
+			username: newUser.username,
+			email: newUser.email
+		});
 	} catch (error) {
 		return next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
 	}
@@ -28,11 +66,13 @@ exports.register = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
 	try {
-		const { email, password } = req.body;
+		let { email, password } = req.body;
 
 		if (!email || !password) {
 			return next(new ErrorHandler(400, 'Please provide all required fields'));
 		}
+
+		email = email.trim().toLowerCase();
 
 		const user = await User.findOne({ email });
 
@@ -46,7 +86,13 @@ exports.login = async (req, res, next) => {
 			return next(new ErrorHandler(401, 'Invalid credentials'));
 		}
 
-		const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
+		// const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
+
+		const token = jwt.sign(
+			{ user: { _id: user._id, email: user.email, isAdmin: user.isAdmin } },
+			process.env.JWT_SECRET,
+			{ expiresIn: process.env.JWT_EXPIRATION }
+		);
 
 		req.session.user = {
 			id: user._id,
@@ -57,6 +103,7 @@ exports.login = async (req, res, next) => {
 
         res.status(200).send('Logged in successfully');
 	} catch (error) {
+		console.error(error);
 		return next(new ErrorHandler(500, 'Something went wrong. Please try again later'));
 	}
 };
@@ -64,7 +111,7 @@ exports.login = async (req, res, next) => {
 exports.authenticate = async (req, res, next) => {
 	try {
 		const user = await req.session.user;
-		
+
 		if (user) {
 			res.status(200).json(user);
 		} else {

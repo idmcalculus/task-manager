@@ -59,7 +59,7 @@ exports.welcomeHTML = () => {
                         It also provides email notifications for task assignment and completion, supports file attachments,
                         and implements user authentication and authorization using JWT.
                     </p>
-                    <p>Check out the <a href="/api-docs">API documentation</a></p>
+                    <p>Check out the <a href="/api/docs">API documentation</a></p>
                     <p>Find the project source code on <a href="https://github.com/idmcalculus/task-manager-api" target="_blank" rel="noopener noreferrer">GitHub</a></p>
                 </div>
             </div>

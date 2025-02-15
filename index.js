@@ -12,6 +12,7 @@ const swaggerDocument = require('./swagger');
 const connectToDatabase = require('./database/connection');
 const { handleError } = require('./middleware/errorHandler');
 const { welcomeHTML } = require('./utils/welcomeHTML');
+const path = require('path');
 
 // Import routes
 const userRoutes = require('./routes/users');
@@ -34,17 +35,13 @@ app.use(cors({
         if(allowedDomains.indexOf(origin) !== -1 || !origin){
             return callback(null, true);
         } else {
-            var msg = 'The CORS policy for this site does not ' +
-                    'allow access from the specified Origin.';
-            return callback(new Error(msg), false);
+            return callback(new Error('CORS not allowed'), false);
         }
     },
     credentials: true,
     methods: "GET,HEAD,PUT,POST,DELETE",
 }));
-app.options('*', cors());
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { customCssUrl: CSS_URL }));
-app.use('/uploads', express.static('uploads'));
+
 app.use(morgan('dev'));
 app.use(session({
     name: 'sid',
@@ -55,36 +52,47 @@ app.use(session({
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24,
-        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24
     },
     rolling: true,
 }));
 
 // Apply rate limiter to all API routes
-app.use('/v1/', apiRateLimiter);
+app.use('/api/v1/', apiRateLimiter);
+
+// app.use(shouldSendSameSiteNone);
+app.use(express.static('build'));
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { customCssUrl: CSS_URL }));
+app.use('/api/uploads', express.static('uploads'));
 
 // Routes
-app.use('/v1/users', userRoutes);
-app.use('/v1', taskRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1', taskRoutes);
 
 // error handler middleware
 app.use(handleError);
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     res.send(welcomeHTML());
 });
 
-// Connect to the MongoDB database
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname + '/build/index.html'));
+});
+
+// Connect to MongoDB for both direct run and tests
 connectToDatabase()
 .then(() => {
-    const port = process.env.PORT || 3000;
-    app.listen(port, () => {
-        console.log(`Server is running on port ${port}`);
-    });
+    // Only start the server if this file is run directly
+    if (require.main === module) {
+        const port = process.env.PORT || 3000;
+        app.listen(port, () => {
+            console.log(`Server is running on port ${port}`);
+        });
+    }
 })
 .catch((err) => {
-	console.error('Failed to connect to MongoDB', err);
+    console.error('Failed to connect to MongoDB', err);
 });
 
 module.exports = app;

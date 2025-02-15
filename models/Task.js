@@ -20,7 +20,7 @@ const TaskSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId, 
 		ref: 'User',
 		required: false,
-		set: value => (value === '' ? undefined : value)
+		// set: value => (value === '' ? undefined : value)
 	},
 	createdBy: {
 		type: mongoose.Schema.Types.ObjectId,
@@ -29,5 +29,13 @@ const TaskSchema = new mongoose.Schema({
 	},
 	attachment: { type: String, required: false },
 }, { collection: 'tasks', timestamps: true });
+
+TaskSchema.set('toJSON', {
+	transform: (document, returnedObject) => {
+	  returnedObject.id = returnedObject._id.toString()
+	  delete returnedObject._id
+	  delete returnedObject.__v
+	}
+});
 
 module.exports = mongoose.model('Task', TaskSchema);
