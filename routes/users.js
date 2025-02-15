@@ -4,6 +4,7 @@ const router = express.Router();
 
 const { userValidationRules } = require('../utils/validation');
 const { sanitizeUserData } = require('../utils/sanitization');
+const { authorize, isAdmin } = require('../middleware/authMiddleware');
 
 /**
  * @swagger
@@ -141,6 +142,6 @@ router.get('/session-status', userController.authenticate);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/', userController.getUsers);
+router.get('/', authorize, isAdmin, userController.getUsers);
 
 module.exports = router;

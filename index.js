@@ -13,7 +13,6 @@ const connectToDatabase = require('./database/connection');
 const { handleError } = require('./middleware/errorHandler');
 const { welcomeHTML } = require('./utils/welcomeHTML');
 const path = require('path');
-const { fileURLToPath } = require('url');
 
 // Import routes
 const userRoutes = require('./routes/users');
@@ -36,9 +35,7 @@ app.use(cors({
         if(allowedDomains.indexOf(origin) !== -1 || !origin){
             return callback(null, true);
         } else {
-            var msg = 'The CORS policy for this site does not ' +
-                    'allow access from the specified Origin.';
-            return callback(new Error(msg), false);
+            return callback(new Error('CORS not allowed'), false);
         }
     },
     credentials: true,

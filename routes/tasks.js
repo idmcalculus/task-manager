@@ -2,7 +2,7 @@ const express = require('express');
 const { taskValidationRules } = require('../utils/validation');
 const { sanitizeTaskData } = require('../utils/sanitization');
 const taskController = require('../controllers/taskController');
-const { authorize } = require('../middleware/authMiddleware');
+const { authorize, canAccessTask } = require('../middleware/authMiddleware');
 const multerUpload = require('../config/multer');
 
 const router = express.Router();
@@ -37,7 +37,7 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/tasks', taskController.getTasks);
+router.get('/tasks', authorize, taskController.getTasks);
 
 /**
  * @swagger
@@ -75,7 +75,7 @@ router.get('/tasks', taskController.getTasks);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/tasks/:id', taskController.getTaskById);
+router.get('/tasks/:id', authorize, canAccessTask, taskController.getTaskById);
 
 /**
  * @swagger
@@ -136,6 +136,7 @@ router.get('/tasks/:id', taskController.getTaskById);
  *               $ref: '#/components/schemas/Error'
  */
 router.post('/tasks',
+	authorize,
 	taskValidationRules,
 	sanitizeTaskData,
 	multerUpload.single('attachment'),
@@ -213,6 +214,8 @@ router.post('/tasks',
  *               $ref: '#/components/schemas/Error'
  */
 router.put('/tasks/:id',
+	authorize,
+	canAccessTask,
 	taskValidationRules,
 	sanitizeTaskData,
 	multerUpload.single('attachment'),
@@ -263,7 +266,7 @@ router.put('/tasks/:id',
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.delete('/tasks/:id', authorize, taskController.deleteTask);
+router.delete('/tasks/:id', authorize, canAccessTask, taskController.deleteTask);
 
 module.exports = router;
 

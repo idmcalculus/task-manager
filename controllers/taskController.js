@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Task = require('../models/Task');
 const User = require('../models/User');
 const { ErrorHandler } = require('../middleware/errorHandler');
@@ -15,11 +16,25 @@ exports.getTasks = async (req, res, next) => {
 
 		let query = {};
 
-		if (search) {
+		// If not admin, only show tasks created by or assigned to the user
+		if (!req.user.isAdmin) {
 			query.$or = [
-				{ title: { $regex: search, $options: 'i' } },
-				{ description: { $regex: search, $options: 'i' } }
+				{ createdBy: req.user.id },
+				{ assignedTo: req.user.id }
 			];
+		}
+
+		if (search) {
+			const searchQuery = {
+				$or: [
+					{ title: { $regex: search, $options: 'i' } },
+					{ description: { $regex: search, $options: 'i' } }
+				]
+			};
+			// Combine search with existing query
+			query = query.$or ? 
+				{ $and: [query, searchQuery] } : 
+				searchQuery;
 		}
 
 		if (status) {
@@ -70,7 +85,7 @@ exports.getTaskById = async (req, res, next) => {
 
 exports.createTask = async (req, res, next) => {
 	try {
-		const { title, dueDate } = req.body;
+		const { title, dueDate, assignedTo } = req.body;
 
 		if (!title || !dueDate) {
 			return next(new ErrorHandler(400, 'Title and dueDate are required fields'));
@@ -80,15 +95,26 @@ exports.createTask = async (req, res, next) => {
 			return next(new ErrorHandler(400, 'Invalid dueDate. Please provide a valid date in the format YYYY-MM-DD'));
 		}
 
+		if (assignedTo) {
+			const user = await User.findById(assignedTo);
+			if (!user) {
+				return next(new ErrorHandler(404, 'Assigned user not found'));
+			}
+		}
+
+		const userIdObjectId = new mongoose.Types.ObjectId(req.user.id);
+
 		const newTask = new Task({
 			...req.body,
 			attachment: req.file && req.file.path,
+			createdBy: userIdObjectId,
+			assignedTo: assignedTo ? new mongoose.Types.ObjectId(assignedTo) : userIdObjectId,
 		});
 
 		const task = await newTask.save();
 
-		// Send email to assigned user if task is assigned
-		if (task.assignedTo) {
+		// Send email to assigned user if assigned user is not the creator
+		if (!task.assignedTo.equals(userIdObjectId)) {
 			const user = await User.findById(task.assignedTo);
 			await sendEmail(
 				user.email,
@@ -115,32 +141,36 @@ exports.updateTask = async (req, res, next) => {
 
 		const { title, description, dueDate, priority, assignedTo, status } = req.body;
 
-		const updatedTask = {
-			title,
-			description,
-			dueDate,
-			priority,
-			assignedTo,
-			status,
-		};
-
-		if (req.file) {
-			updatedTask.attachment = req.file.path;
-		}
+		if (title) task.title = title;
+		if (description) task.description = description;
+		if (dueDate) task.dueDate = dueDate;
+		if (priority) task.priority = priority;
 		
 		let notifyAssignedUser = false;
 		let notifyCompleted = false;
 
-		if (assignedTo && assignedTo !== task.assignedTo.toString()) {
-			task.assignedTo = assignedTo;
+		const assignedToObjectId = new mongoose.Types.ObjectId(assignedTo);
+
+		// Check if assignedTo changed
+		if (assignedTo && !task.assignedTo.equals(assignedToObjectId)) {
+			const user = await User.findById(assignedTo);
+			if (!user) {
+				return next(new ErrorHandler(404, 'Assigned user not found'));
+			}
+			task.assignedTo = assignedToObjectId;
 			notifyAssignedUser = true;
 		}
 
+		// Check if status changed
 		if (status && status !== task.status) {
 			task.status = status;
 			if (status === 'Completed') {
 				notifyCompleted = true;
 			}
+		}
+
+		if (req.file) {
+			task.attachment = req.file.path;
 		}
 
 		await task.save();
@@ -166,6 +196,7 @@ exports.updateTask = async (req, res, next) => {
 
 		res.status(202).json(task);
 	} catch (error) {
+		console.error(error);
 		return next(new ErrorHandler(500, 'Failed to update task'));
 	}
 };
