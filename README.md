@@ -60,7 +60,7 @@ The API should now be running at `http://localhost:8008`.
 
 ## API Documentation
 
-You can find the API documentation at `http://localhost:8008/api-docs`.
+You can find the API documentation at `http://localhost:8008/api/docs`.
 
 ## Running Tests
 
