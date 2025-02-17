@@ -20,7 +20,7 @@ const TaskSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId, 
 		ref: 'User',
 		required: false,
-		// set: value => (value === '' ? undefined : value)
+		set: value => (value === "" || value === null || value === "null" ? undefined : value)
 	},
 	createdBy: {
 		type: mongoose.Schema.Types.ObjectId,

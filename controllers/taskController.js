@@ -95,7 +95,7 @@ exports.createTask = async (req, res, next) => {
 			return next(new ErrorHandler(400, 'Invalid dueDate. Please provide a valid date in the format YYYY-MM-DD'));
 		}
 
-		if (assignedTo) {
+		if (assignedTo && assignedTo !== 'null') {
 			const user = await User.findById(assignedTo);
 			if (!user) {
 				return next(new ErrorHandler(404, 'Assigned user not found'));
@@ -106,9 +106,9 @@ exports.createTask = async (req, res, next) => {
 
 		const newTask = new Task({
 			...req.body,
-			attachment: req.file && req.file.path,
+			attachment: req.file ? req.file.location : undefined,
 			createdBy: userIdObjectId,
-			assignedTo: assignedTo ? new mongoose.Types.ObjectId(assignedTo) : userIdObjectId,
+			assignedTo: assignedTo && assignedTo !== 'null' ? new mongoose.Types.ObjectId(assignedTo) : userIdObjectId,
 		});
 
 		const task = await newTask.save();
@@ -201,12 +201,23 @@ exports.updateTask = async (req, res, next) => {
 	}
 };
 
+const { deleteFile } = require('../config/s3');
+
 exports.deleteTask = async (req, res, next) => {
 	try {
-		const task = await Task.findByIdAndDelete(req.params.id);
+		// First get the task to check if it has an attachment
+		const task = await Task.findById(req.params.id);
 		if (!task) {
 			return next(new ErrorHandler(404, 'Task not found'));
 		}
+
+		// If task has an attachment, delete it from S3
+		if (task.attachment) {
+			await deleteFile(task.attachment);
+		}
+
+		// Now delete the task
+		await Task.findByIdAndDelete(req.params.id);
 		res.status(202).json({ message: 'Task deleted successfully' });
 	} catch (error) {
 		return next(new ErrorHandler(500, 'Failed to delete task'));

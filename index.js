@@ -63,7 +63,6 @@ app.use('/api/v1/', apiRateLimiter);
 // app.use(shouldSendSameSiteNone);
 app.use(express.static('build'));
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { customCssUrl: CSS_URL }));
-app.use('/api/uploads', express.static('uploads'));
 
 // Routes
 app.use('/api/v1/users', userRoutes);
