@@ -85,6 +85,7 @@ exports.getTaskById = async (req, res, next) => {
 
 exports.createTask = async (req, res, next) => {
 	try {
+		console.log(req.file);
 		const { title, dueDate, assignedTo } = req.body;
 
 		if (!title || !dueDate) {
@@ -152,7 +153,7 @@ exports.updateTask = async (req, res, next) => {
 		const assignedToObjectId = new mongoose.Types.ObjectId(assignedTo);
 
 		// Check if assignedTo changed
-		if (assignedTo && !task.assignedTo.equals(assignedToObjectId)) {
+		if (assignedTo && assignedTo !== 'null' && !task.assignedTo.equals(assignedToObjectId)) {
 			const user = await User.findById(assignedTo);
 			if (!user) {
 				return next(new ErrorHandler(404, 'Assigned user not found'));
@@ -170,7 +171,7 @@ exports.updateTask = async (req, res, next) => {
 		}
 
 		if (req.file) {
-			task.attachment = req.file.path;
+			task.attachment = req.file.location;
 		}
 
 		await task.save();

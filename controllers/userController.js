@@ -101,7 +101,17 @@ exports.login = async (req, res, next) => {
 			token,
 		};
 
-        res.status(200).send('Logged in successfully');
+        // Return token and user info in response body for API clients
+        res.status(200).json({
+            token,
+            user: {
+                id: user._id,
+                email: user.email,
+                username: user.username,
+                isAdmin: user.isAdmin
+            },
+            message: 'Logged in successfully'
+        });
 	} catch (error) {
 		console.error(error);
 		return next(new ErrorHandler(500, 'Something went wrong. Please try again later'));

@@ -2,9 +2,10 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const router = express.Router();
 
-const { userValidationRules } = require('../utils/validation');
+const { userValidationRules, loginValidationRules } = require('../utils/validation');
 const { sanitizeUserData } = require('../utils/sanitization');
 const { authorize, isAdmin } = require('../middleware/authMiddleware');
+const { validateRequest } = require('../middleware/validationMiddleware');
 
 /**
  * @swagger
@@ -34,7 +35,7 @@ const { authorize, isAdmin } = require('../middleware/authMiddleware');
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/register', userValidationRules, sanitizeUserData, userController.register);
+router.post('/register', sanitizeUserData, userValidationRules, validateRequest, userController.register);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post('/register', userValidationRules, sanitizeUserData, userController.r
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/login', userValidationRules, sanitizeUserData, userController.login);
+router.post('/login', sanitizeUserData, loginValidationRules, validateRequest, userController.login);
 
 /**
  * @swagger

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">76.47% </span>
+                <span class="strong">5.88% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>13/17</span>
+                <span class='fraction'>1/17</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">56.25% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>9/16</span>
+                <span class='fraction'>0/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">76.47% </span>
+                <span class="strong">5.88% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>13/17</span>
+                <span class='fraction'>1/17</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -100,66 +100,66 @@
 <a name='L35'></a><a href='#L35'>35</a>
 <a name='L36'></a><a href='#L36'>36</a>
 <a name='L37'></a><a href='#L37'>37</a>
-<a name='L38'></a><a href='#L38'>38</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L38'></a><a href='#L38'>38</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">17x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">exports.isValidDate = (dateString) =&gt; {
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">exports.isValidDate = <span class="fstat-no" title="function not covered" >(d</span>ateString) =&gt; {
 	// Check if the date string matches "2023-05-18" or "2023-05-18T00:31"
-	const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-	const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+	const dateRegex = <span class="cstat-no" title="statement not covered" >/^\d{4}-\d{2}-\d{2}$/;</span>
+	const dateTimeRegex = <span class="cstat-no" title="statement not covered" >/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;</span>
 &nbsp;
-	if (!dateRegex.test(dateString) &amp;&amp; !dateTimeRegex.test(dateString)) {
-		return false;
+<span class="cstat-no" title="statement not covered" >	if (!dateRegex.test(dateString) &amp;&amp; !dateTimeRegex.test(dateString)) {</span>
+<span class="cstat-no" title="statement not covered" >		return false;</span>
 	}
 &nbsp;
 	// Parse the date and check if it's a valid date object
-	const date = new Date(dateString);
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (isNaN(date.getTime())) {
+	const date = <span class="cstat-no" title="statement not covered" >new Date(dateString);</span>
+<span class="cstat-no" title="statement not covered" >	if (isNaN(date.getTime())) {</span>
 <span class="cstat-no" title="statement not covered" >		return false;</span>
 	}
 &nbsp;
 	// Ensure the date components match the parsed date object
-	const components = dateString.split('-');
-	const year = parseInt(components[0]);
-	const month = parseInt(components[1]);
-	const day = parseInt(components[2].split('T')[0]);
+	const components = <span class="cstat-no" title="statement not covered" >dateString.split('-');</span>
+	const year = <span class="cstat-no" title="statement not covered" >parseInt(components[0]);</span>
+	const month = <span class="cstat-no" title="statement not covered" >parseInt(components[1]);</span>
+	const day = <span class="cstat-no" title="statement not covered" >parseInt(components[2].split('T')[0]);</span>
 &nbsp;
 	// For date-time format, check hours and minutes
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (dateTimeRegex.test(dateString)) {
+<span class="cstat-no" title="statement not covered" >	if (dateTimeRegex.test(dateString)) {</span>
 		const hours = <span class="cstat-no" title="statement not covered" >parseInt(components[2].split('T')[1].split(':')[0]);</span>
 		const minutes = <span class="cstat-no" title="statement not covered" >parseInt(components[2].split('T')[1].split(':')[1]);</span>
 <span class="cstat-no" title="statement not covered" >		return date.getFullYear() === year &amp;&amp; </span>
@@ -170,7 +170,7 @@
 	}
 &nbsp;
 	// For date-only format
-	return date.getFullYear() === year &amp;&amp; 
+<span class="cstat-no" title="statement not covered" >	return date.getFullYear() === year &amp;&amp; </span>
 		date.getMonth() + 1 === month &amp;&amp; 
 		date.getDate() === day;
 }
@@ -181,7 +181,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-02-15T20:06:36.009Z
+                at 2025-03-02T00:20:41.041Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

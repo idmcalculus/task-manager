@@ -1,0 +1,14 @@
+POST  http://localhost:8008/api/v1/tasks
+Content-Type: multipart/form-data
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY3YzNiNjViODFlYWZmNDM2MmI2NDc1OCIsImVtYWlsIjoiaWRtLmNhbGN1bHVzQGdtYWlsLmNvbSIsImlzQWRtaW4iOmZhbHNlfSwiaWF0IjoxNzQwODgxMTg1LCJleHAiOjE3NDA4ODQ3ODV9.OVw4pCX7zNGPykUuzltF4SftKx7GyQpfLHGQ7LGWxag
+
+{
+	"title": "test 2",
+	"description": "new task",
+	"dueDate": "2025-03-05",
+	"status": "Not Started",
+	"priority": "Low",
+	"assignedTo": "67c3b65b81eaff4362b64758",
+	"createdBy": "67c3b65b81eaff4362b64758",
+	"attachment": "test-file.jpg"
+}

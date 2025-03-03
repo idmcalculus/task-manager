@@ -3,6 +3,7 @@
  */
 const request = require('supertest');
 const mongoose = require('mongoose');
+
 const app = require('../index');
 const Task = require('../models/Task');
 const User = require('../models/User');
@@ -15,7 +16,6 @@ let noAuthAgent;      // Does NOT retain any session (for 401 checks)
 
 let adminToken;
 let regularUserToken;
-let assignedUserId;
 
 describe('Task API', () => {
   /**

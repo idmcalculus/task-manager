@@ -3,6 +3,7 @@ const { taskValidationRules } = require('../utils/validation');
 const { sanitizeTaskData } = require('../utils/sanitization');
 const taskController = require('../controllers/taskController');
 const { authorize, canAccessTask } = require('../middleware/authMiddleware');
+const { validateRequest } = require('../middleware/validationMiddleware');
 const multerUpload = require('../config/multer');
 
 const router = express.Router();
@@ -137,9 +138,10 @@ router.get('/tasks/:id', authorize, canAccessTask, taskController.getTaskById);
  */
 router.post('/tasks',
 	authorize,
-	taskValidationRules,
-	sanitizeTaskData,
 	multerUpload.single('attachment'),
+	sanitizeTaskData,
+	taskValidationRules,
+	validateRequest,
 	taskController.createTask
 );
 
@@ -216,9 +218,10 @@ router.post('/tasks',
 router.put('/tasks/:id',
 	authorize,
 	canAccessTask,
-	taskValidationRules,
-	sanitizeTaskData,
 	multerUpload.single('attachment'),
+	sanitizeTaskData,
+	taskValidationRules,
+	validateRequest,
 	taskController.updateTask
 );
 

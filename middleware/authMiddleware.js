@@ -18,6 +18,7 @@ exports.authorize = (req, res, next) => {
 
 		const token = bearerHeader.split(' ')[1];
 		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
 		req.user = decoded.user;
 		next();
 	} catch (error) {
