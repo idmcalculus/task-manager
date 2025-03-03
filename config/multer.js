@@ -1,6 +1,6 @@
 const multer = require('multer');
 const multerS3 = require('multer-s3');
-const s3Client = require('./s3');
+const { s3Client } = require('./s3');
 
 const upload = multer({
     storage: multerS3({
@@ -10,6 +10,9 @@ const upload = multer({
             cb(null, { fieldName: file.fieldname });
         },
         key: function (req, file, cb) {
+            if (!file.originalname) {
+                return cb(new Error('File name is required'), null);
+            }
             // remove spaces from original filename, replace with dashes
             const filename = file.originalname.replace(/\s+/g, '-').toLowerCase();
             cb(null, `${Date.now()}-${filename}`);

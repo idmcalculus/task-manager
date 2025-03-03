@@ -85,7 +85,6 @@ exports.getTaskById = async (req, res, next) => {
 
 exports.createTask = async (req, res, next) => {
 	try {
-		console.log(req.file);
 		const { title, dueDate, assignedTo } = req.body;
 
 		if (!title || !dueDate) {

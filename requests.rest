@@ -1,14 +1,69 @@
-POST  http://localhost:8008/api/v1/tasks
-Content-Type: multipart/form-data
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY3YzNiNjViODFlYWZmNDM2MmI2NDc1OCIsImVtYWlsIjoiaWRtLmNhbGN1bHVzQGdtYWlsLmNvbSIsImlzQWRtaW4iOmZhbHNlfSwiaWF0IjoxNzQwODgxMTg1LCJleHAiOjE3NDA4ODQ3ODV9.OVw4pCX7zNGPykUuzltF4SftKx7GyQpfLHGQ7LGWxag
+@hostname = http://localhost
+@port = 8008
+@host = {{hostname}}:{{port}}
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY3YzNiNjViODFlYWZmNDM2MmI2NDc1OCIsImVtYWlsIjoiaWRtLmNhbGN1bHVzQGdtYWlsLmNvbSIsImlzQWRtaW4iOmZhbHNlfSwiaWF0IjoxNzQxMDQzNTgxLCJleHAiOjE3NDEwNDcxODF9.X6FKmsqeQ1pI2Lhn4lM11Dk5ez6pLk5Yszmq1siVfKI
+
+###
+// Login
+
+POST  {{host}}/api/v1/users/login
+Content-Type: application/json
 
 {
-	"title": "test 2",
-	"description": "new task",
-	"dueDate": "2025-03-05",
-	"status": "Not Started",
-	"priority": "Low",
-	"assignedTo": "67c3b65b81eaff4362b64758",
-	"createdBy": "67c3b65b81eaff4362b64758",
-	"attachment": "test-file.jpg"
+  "email": "idm.calculus@gmail.com",
+  "password": "MA13ka2la"
 }
+
+###
+// Create Task (no attachment)
+POST  {{host}}/api/v1/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "test 3",
+  "description": "new task 3",
+  "dueDate": "2025-03-05",
+  "status": "Not Started",
+  "priority": "Low",
+  "createdBy": "67c3b65b81eaff4362b64758"
+}
+
+###
+// Create Task (with attachment)
+POST  {{host}}/api/v1/tasks
+Content-Type: multipart/form-data; boundary=boundary
+Authorization: Bearer {{token}}
+
+--boundary
+Content-Disposition: form-data; name="attachment"; filename="resume.pdf"
+Content-Type: application/pdf
+
+< /Users/idmcalculus/Documents/Task Manager App/task-manager-api/resume.pdf
+--boundary
+Content-Disposition: form-data; name="title"
+
+test 4
+--boundary
+Content-Disposition: form-data; name="description"
+
+new task with attachment
+--boundary
+Content-Disposition: form-data; name="dueDate"
+
+2025-03-05
+--boundary
+Content-Disposition: form-data; name="status"
+
+Not Started
+--boundary
+Content-Disposition: form-data; name="priority"
+
+Low
+--boundary
+Content-Disposition: form-data; name="createdBy"
+
+67c3b65b81eaff4362b64758
+--boundary--
+
+###

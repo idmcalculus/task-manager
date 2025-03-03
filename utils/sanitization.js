@@ -1,6 +1,8 @@
 const sanitizeHtml = require('sanitize-html');
 
 const sanitizeTaskData = (req, res, next) => {
+	console.log(req.body);
+	
 	req.body.title = sanitizeHtml(req.body.title || '');
 	req.body.description = sanitizeHtml(req.body.description || '');
 	req.body.status = sanitizeHtml(req.body.status || '');
